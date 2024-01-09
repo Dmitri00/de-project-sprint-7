@@ -5,11 +5,11 @@ from spark_app import SparkApp
 
 
 
-class MessageCityMatchApp(SparkApp):
+class UserGeoStats(SparkApp):
     def __init__(self):
         super().__init__(
-            "MessageCityMatchApp",
-            "MessageCityMatchApp"
+            "UserGeoStats",
+            "UserGeoStats"
         )
     def run(self, args):
         date = args[0]
@@ -106,4 +106,4 @@ class MessageCityMatchApp(SparkApp):
                 .filter(F.date_sub(end_date, days_count) <= F.col("date"))
 
 if __name__ == '__main__':
-    MessageCityMatchApp().main()
+    UserGeoStats().main()
