@@ -13,12 +13,12 @@ class SparkApp(ABC):
         self.logger_name = logger_name
 
     @abstractclassmethod
-    def run(self, spark, args):
+    def run(self, args):
         pass
 
     def main(self):
         # init spark
-        spark = SparkSession\
+        self.spark = SparkSession\
             .builder.appName(f"{self.app_name}")\
             .config("spark.dynamicAllocation.enabled", "true")\
             .getOrCreate()
@@ -33,7 +33,7 @@ class SparkApp(ABC):
         self.logger.info(f'Starting app {self.app_name}')
 
         try:
-            self.run(spark, args)
+            self.run(args)
             self.logger.info(f'Finishing app {self.app_name}')
         except Exception as e:
             self.logger.info('Stoping app {self.app_name}')
