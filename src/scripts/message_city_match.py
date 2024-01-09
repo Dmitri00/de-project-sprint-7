@@ -18,8 +18,7 @@ def city_rank(partition_by_col, dist_col):
 
     return F.row_number().over(message_city_window)
 
-def local_time(time_col, tz_col):
-    return F.from_utc_timestamp(F.col("TIME_UTC"),F.col('timezone'))
+
 
 def city_geo_source(path):
     city_geo = get_spark().read.option("delimiter", ",") \
@@ -52,7 +51,7 @@ class MessageCityMatchApp(SparkApp):
         messages_matched = args[3]
 
         end_date = F.to_date(F.lit(date), "yyyy-MM-dd")
-        events_users = events_source(events_raw)
+        events_users = events_source(events_raw, end_date)
 
         city_geo = city_geo_source(city_geo)
         dist_col = 'distance'
