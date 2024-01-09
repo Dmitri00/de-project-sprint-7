@@ -70,7 +70,7 @@ class MessageCityMatchApp(SparkApp):
         message_with_city = message_with_city \
             .withColumn('local_time', F.from_utc_timestamp(F.col("datetime"),F.col('city_tz')))
 
-        message_with_city.write.parquet(f'{messages_matched}/dt={end_date}')
+        message_with_city.write.parquet(f'{messages_matched}/dt={date}')
 
 if __name__ == '__main__':
     MessageCityMatchApp().main()
