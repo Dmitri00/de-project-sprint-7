@@ -26,7 +26,7 @@ class UserGeoStats(SparkApp):
         user_travels = self.extract_user_travels(events_users).persist()
 
 
-        user_last_travels = self.filter_user_last_travels(user_travels)
+        user_last_travels = self.search_user_last_travels(user_travels)
 
         user_home_cities = self.search_home_cities(user_travels, home_stand_days)
 
