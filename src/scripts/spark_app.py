@@ -4,9 +4,6 @@ from abc import abstractclassmethod, ABC
 
 from pyspark.sql import SparkSession
 
-def get_spark():
-    SparkSession.getOrCreate()
-
 class SparkApp(ABC):
     def __init__(self, app_name, logger_name):
         self.app_name = app_name

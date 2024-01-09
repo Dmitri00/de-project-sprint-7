@@ -1,7 +1,7 @@
 
 import pyspark.sql.functions as F 
 from pyspark.sql.window import Window
-from spark_app import SparkApp, get_spark
+from spark_app import SparkApp
 
 
 

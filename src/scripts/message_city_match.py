@@ -43,7 +43,7 @@ class MessageCityMatchApp(SparkApp):
             * F.cos(b_lat)
             * F.cos(a_lon - b_lon)
                 ) \
-                * F.lit(6371.0*2),
+                * F.lit(6371.0*2)
     def city_rank(self, partition_by_col, dist_col):
         message_city_window = Window().partitionBy([partition_by_col]).orderBy(dist_col)
         return F.row_number().over(message_city_window)
