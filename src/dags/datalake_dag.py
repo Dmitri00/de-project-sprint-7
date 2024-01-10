@@ -82,6 +82,20 @@ with DAG(
         **kwargs
     )
 
+    build_geo_stats = SparkSubmitOperator(
+        task_id="geo_stats",
+        dag=dag,
+        application="/lessons/geo_stats.py",
+        conn_id="yarn_spark",
+        application_args=[
+            exec_date,
+            user_stat_depth,
+            data_matched_events_path,
+            week_zone_report_path
+        ],
+        **kwargs
+    )
+
 
     
     finish = DummyOperator(task_id='finish')
@@ -89,6 +103,6 @@ with DAG(
     (
         start 
         >> message_city_match 
-        #>> [build_user_geo_stats, built_week_zone_report_task, built_recommendation_zone_report_task] 
+        #>> [build_user_geo_stats, build_geo_stats, built_recommendation_zone_report_task] 
         >> finish
     )
