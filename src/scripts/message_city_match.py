@@ -66,7 +66,7 @@ class MessageCityMatchApp(SparkApp):
 
     def events_source(self, path, end_date):
         return self.spark.read.parquet(path) \
-                .filter(F.col("date")== end_date) \
+                .filter(F.col("datetime")== end_date) \
                 .where("event.message_from is not null and event_type = 'message'")
 
 
