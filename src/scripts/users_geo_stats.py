@@ -92,12 +92,25 @@ class UserGeoStats(SparkApp):
             )
     
     def user_travel_agg_stats(self, user_travels):
-        user_stats = user_travels.groupBy('user_id') \
+        user_stats = user_travels \
+            .withColumn('travel_struct',
+                F.struct(
+                     # sort array будет соритровать список структур по первой колонке
+                     F.col('datetime'),
+                     F.col('zone_id')
+                )
+            ) \
+            .groupBy('user_id') \
             .agg(
                 F.count('zone_id').alias('travel_count'),
-                #  TODO: написать сборку массива городов по порядку дат!
-                F.collect_list('zone_id').alias('travel_array')
-            )
+                F.sort_array(F.collect_list('travel_struct')).alias('travel_array_dt')
+            ) \
+            .withColumn(
+                'travel_array',
+                F.col('travel_array_dt').zone_id
+            ) \
+            .drop('travel_array_dt')
+
         return user_stats
 
 
