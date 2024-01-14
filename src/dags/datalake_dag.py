@@ -97,12 +97,26 @@ with DAG(
     )
 
 
+    build_user_recoms = SparkSubmitOperator(
+        task_id="user_recommendations",
+        dag=dag,
+        application="/lessons/user_recommendations.py",
+        conn_id="yarn_spark",
+        application_args=[
+            exec_date,
+            user_stat_depth,
+            data_matched_events_path,
+            recommendation_zone_report_path
+        ],
+        **kwargs
+    )
+
     
     finish = DummyOperator(task_id='finish')
     
     (
         start 
         >> message_city_match 
-        #>> [build_user_geo_stats, build_geo_stats, built_recommendation_zone_report_task] 
+        >> [build_user_geo_stats, build_geo_stats, build_user_recoms] 
         >> finish
     )
