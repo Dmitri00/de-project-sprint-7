@@ -48,16 +48,20 @@ class UserGeoStats(SparkApp):
     def extract_user_travels(self, user_geo_events):
         # взять все сообщения
         # построить лаг города
-        # отфильтрить смены городов, первую запись выкинуть
+        # оставить только смены городов, первую запись выкинуть
         # построить лид дат при смене города
-        # заполнить последнюю дату текущей датой
+        # заполнить последнюю дату макс датой в выборке
         # персист
+        max_date = user_geo_events.select(F.max('datetime'))
         user_story_window = Window().partitionBy('user_id').orderBy(F.asc('datetime'))
         user_travels = user_geo_events \
             .withColumn('city_lag', F.lag('zone_id').over(user_story_window)) \
-            .filter(~F.isnull('city_lag')) \
+            .filter(
+                (~F.isnull('city_lag')) &
+                (F.col('city_lag') != F.col('zone_id'))
+            ) \
             .withColumn('datetime_lead', F.lead('datetime').over(user_story_window)) \
-            .withColumn('datetime_lead', self._fill_datetime('datetime_lead', F.now()))
+            .withColumn('datetime_lead', self._fill_datetime('datetime_lead', max_date))
         
         return user_travels
     

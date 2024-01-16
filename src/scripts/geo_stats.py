@@ -32,7 +32,7 @@ class GeoStats(SparkApp):
             )
 
         joint_stats = week_stats \
-            .join(month_stats, on=['month', 'zone_id', 'event_type'])
+            .join(month_stats, on=['month', 'zone_id'])
 
         joint_stats.write.parquet(f'{geo_stats_path}/dt={date}')
 
@@ -40,7 +40,7 @@ class GeoStats(SparkApp):
         # оличество сообщений;
         # количество реакций;
         # количество подписок;
-        # количество регистраций.
+        # количество событий user.
         agg_stats = grouped_events \
             .pivot('event_type', self.EVENTS) \
             .count('user_id') \
@@ -50,8 +50,8 @@ class GeoStats(SparkApp):
     def geo_events_source(self, path, end_date, days_count):
         return self.spark.read.parquet(path) \
                 .filter(F.date_sub(end_date, days_count) <= F.col("datetime")) \
-                .withColumn('week', F.weekofyear('date')) \
-                .withColumn('month', F.month('date')) \
+                .withColumn('week', F.weekofyear('week', 'date')) \
+                .withColumn('month', F.date_trunc('month', 'date')) \
                 .withColumnRenamed('event.event_type', 'event_type')
 
 if __name__ == '__main__':
